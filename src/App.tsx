@@ -13,6 +13,7 @@ export default function App() {
 
   const [todoInput, setTodoInput] = useState('');
   const [descriptionTodoInput, setDescriptionTodoInput] = useState('');
+  const [editingId, setEditingId] = useState<number | null>(null);
   const [todos, setTodos] = useState<ITodoType[]>(() => {
     const storedTodos = localStorage.getItem('@codersList:todos');
     if (storedTodos) {
@@ -61,6 +62,34 @@ export default function App() {
     setTodos((previousTodo) => previousTodo.filter((todo) => todo.id !== id))
   }
 
+  function startEditing(id: number) {
+    const todo = todos.find((todo) => todo.id === id);
+    if (todo) {
+      setEditingId(id);
+      setTodoInput(todo.title);
+      setDescriptionTodoInput(todo.description);
+    }
+  }
+
+  function saveEdit() {
+    if(editingId !== null){
+      setTodos((previousTodo) => {
+        const updatedTodo = previousTodo.map((todo) => {
+          if (todo.id === editingId) {
+            return {
+              ...todo,
+              title: todoInput,
+              description: descriptionTodoInput
+            }
+          }
+          return todo;
+        })
+        setEditingId(null);
+        return updatedTodo;
+      })
+    }
+  }
+
   return (
     <div>
       <header>
@@ -77,9 +106,11 @@ export default function App() {
           value={descriptionTodoInput} 
           onChange={handleInputChangeDescription} 
         />
-        <button onClick={handleAddTodo}>
-          Adicionar
-        </button>
+        {editingId === null ? (
+          <button onClick={handleAddTodo}>Adicionar</button>
+        ) : (
+          <button onClick={saveEdit}>Salvar</button>
+        )}
       </div>
 
       {todos.map(todo => (
@@ -88,6 +119,7 @@ export default function App() {
           todo={todo} 
           completeTodo={completeTodo} 
           deleteTodo={deleteTodo}
+          editTodo={startEditing}
         />
       ))}
 

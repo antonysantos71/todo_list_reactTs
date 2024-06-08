@@ -5,9 +5,10 @@ interface ICardProps {
   todo: ITodoType;
   completeTodo: (id: number) => void;
   deleteTodo: (id: number) => void;
+  editTodo: (id: number) => void;
 }
 
-export const Card = ({ todo, completeTodo, deleteTodo}: ICardProps) => {
+export const Card = ({ todo, completeTodo, deleteTodo, editTodo }: ICardProps) => {
 
   function handleCompleteTodo(){
     completeTodo(todo.id)
@@ -15,6 +16,10 @@ export const Card = ({ todo, completeTodo, deleteTodo}: ICardProps) => {
 
   function handleDeleteTodo(){
     deleteTodo(todo.id)
+  }
+
+  function handleEditTodo(){
+    editTodo(todo.id)
   }
   
   return (
@@ -26,6 +31,7 @@ export const Card = ({ todo, completeTodo, deleteTodo}: ICardProps) => {
       <div className='card-buttons'>
         <button onClick={handleCompleteTodo}>{todo.complented ? 'Retomar' : 'Completar'}</button>
         <button onClick={handleDeleteTodo}>Deletar</button>
+        {todo.complented ? null : <button onClick={handleEditTodo}>Editar</button>}
       </div>
     </div>
   )
